@@ -10,46 +10,30 @@ homepage = "https://github.com/stardewdevs/stardew-emulator"
 documentation = "https://github.com/stardewdevs/stardew-emulator/docs"
 
 [dependencies]
-# Terminal emulation
 alacritty_terminal = "0.25"
 vte = "0.14"
 grid = "0.14"
-
-# PTY handling
 portable-pty = "0.8"
 rustix = { version = "0.38", features = ["pty", "termios"] }
-
-# JNI bridge
 jni = "0.21"
 jni-sys = "0.3"
-
-# Asynchronous I/O
 tokio = { version = "1.0", features = ["full"] }
-
-# Error handling
 anyhow = "1.0"
 thiserror = "1.0"
-
-# Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 toml = "0.8"
-
-# Logging
 log = "0.4"
 env_logger = "0.11"
-
-# Utilities
 crossfont = "0.8"
 unicode-width = "0.2"
 unicode-segmentation = "1.11"
 time = "0.3"
 
-# Android-specific
 [target.'cfg(target_os = "android")'.dependencies]
-ndk = "0.9"
-ndk-sys = "0.6"
-glue = "0.3"
+ndk = { version = "0.9", optional = true }
+ndk-sys = { version = "0.6", optional = true }
+glue = { version = "0.3", optional = true }
 
 [dev-dependencies]
 tempfile = "3"
@@ -62,4 +46,4 @@ crate-type = ["cdylib", "rlib"]
 [features]
 default = ["jni"]
 jni = ["dep:jni"]
-android = ["ndk", "ndk-sys"]
+android = ["dep:ndk", "dep:ndk-sys", "dep:glue"]
