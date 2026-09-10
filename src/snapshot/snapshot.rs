@@ -1,3 +1,5 @@
+pub mod snapshot;
+pub use snapshot::{Cell, Color, TerminalMode, TerminalSnapshot};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
