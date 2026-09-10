@@ -16,13 +16,13 @@ The shell is Stardew's own bash, not Android's toybox shell. It loads from the S
 
 ## Building
 
-```toml
+```bash
 cargo build --features "jni"
 ```
 
 ## Testing
 
-```toml
+```bash
 cargo test --features "jni"
 ```
 
