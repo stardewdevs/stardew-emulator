@@ -1,3 +1,4 @@
+use crate::config::EmulatorConfig;
 use crate::error::EmulatorError;
 use portable_pty::{native_pty_system, Child, CommandBuilder, MasterPty, PtySize, SlavePty};
 use std::io::{Read, Write};
@@ -11,21 +12,37 @@ pub struct Pty {
 }
 
 impl Pty {
-    pub fn new(cols: u16, rows: u16) -> Result<Self, EmulatorError> {
+    pub fn new(config: &EmulatorConfig) -> Result<Self, EmulatorError> {
         let pty_system = native_pty_system();
         let pair = pty_system
             .openpty(PtySize {
-                rows,
-                cols,
+                rows: config.rows as u16,
+                cols: config.cols as u16,
                 pixel_width: 0,
                 pixel_height: 0,
             })
             .map_err(|e| EmulatorError::Pty(e.to_string()))?;
 
-        let shell = std::env::var("SHELL").unwrap_or_else(|_| "/system/bin/sh".to_string());
-        let mut cmd = CommandBuilder::new(shell);
-        cmd.env("TERM", "xterm-256color");
-        cmd.env("COLORTERM", "truecolor");
+        let shell = if std::path::Path::new(&config.shell).exists() {
+            config.shell.clone()
+        } else {
+            return Err(EmulatorError::Config(format!(
+                "Stardew shell not found at {}. Run the bootstrap first.",
+                config.shell
+            )));
+        };
+
+        let mut cmd = CommandBuilder::new(&shell);
+        cmd.arg("-l");
+        cmd.env("TERM", &config.term);
+        cmd.env("COLORTERM", &config.colorterm);
+        cmd.env("HOME", &config.home);
+        cmd.env("PREFIX", &config.prefix);
+        cmd.env("PATH", &config.path);
+        cmd.env("LD_LIBRARY_PATH", &config.ld_library_path);
+        cmd.env("LANG", "en_US.UTF-8");
+        cmd.env("LC_ALL", "en_US.UTF-8");
+        cmd.cwd(&config.home);
 
         let child = pair
             .slave
