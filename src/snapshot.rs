@@ -68,8 +68,18 @@ impl Default for Cell {
     fn default() -> Self {
         Self {
             ch: ' ',
-            fg: Color { r: 255, g: 255, b: 255, a: 255 },
-            bg: Color { r: 0, g: 0, b: 0, a: 255 },
+            fg: Color {
+                r: 255,
+                g: 255,
+                b: 255,
+                a: 255,
+            },
+            bg: Color {
+                r: 0,
+                g: 0,
+                b: 0,
+                a: 255,
+            },
             bold: false,
             italic: false,
             underline: false,
