@@ -34,11 +34,13 @@ pub struct StardewEmulator {
 
 impl StardewEmulator {
     pub fn new(cols: usize, rows: usize) -> Result<Self, EmulatorError> {
-        let mut config = EmulatorConfig::default();
-        config.cols = cols;
-        config.rows = rows;
-        Self::with_config(config)
-    }
+    let config = EmulatorConfig {
+        cols,
+        rows,
+        ..Default::default()
+    };
+    Self::with_config(config)
+}
 
     pub fn with_config(config: EmulatorConfig) -> Result<Self, EmulatorError> {
         let engine = Engine::new(config.cols, config.rows);
