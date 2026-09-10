@@ -1,11 +1,10 @@
 use crate::config::EmulatorConfig;
 use crate::error::EmulatorError;
-use portable_pty::{native_pty_system, Child, CommandBuilder, MasterPty, PtySize, SlavePty};
+use portable_pty::{native_pty_system, Child, CommandBuilder, MasterPty, PtySize};
 use std::io::{Read, Write};
 
 pub struct Pty {
     master: Box<dyn MasterPty + Send>,
-    slave: Box<dyn SlavePty + Send>,
     child: Box<dyn Child + Send + Sync>,
     reader: Option<Box<dyn Read + Send>>,
     writer: Option<Box<dyn Write + Send>>,
@@ -59,7 +58,6 @@ impl Pty {
 
         Ok(Self {
             master: pair.master,
-            slave: pair.slave,
             child,
             reader: Some(reader),
             writer: Some(writer),
