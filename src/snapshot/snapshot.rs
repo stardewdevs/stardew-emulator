@@ -1,8 +1,6 @@
-pub mod snapshot;
-pub use snapshot::{Cell, Color, TerminalMode, TerminalSnapshot};
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Color {
     pub r: u8,
     pub g: u8,
@@ -10,7 +8,7 @@ pub struct Color {
     pub a: u8,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Cell {
     pub ch: char,
     pub fg: Color,
@@ -19,14 +17,17 @@ pub struct Cell {
     pub italic: bool,
     pub underline: bool,
     pub strikethrough: bool,
+    pub inverse: bool,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct TerminalMode {
     pub alt_screen: bool,
     pub cursor_visible: bool,
     pub bracketed_paste: bool,
     pub app_cursor_keys: bool,
+    pub app_keypad: bool,
+    pub mouse_reporting: bool,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -38,6 +39,29 @@ pub struct TerminalSnapshot {
     pub cursor_row: usize,
     pub mode: TerminalMode,
     pub scroll_offset: usize,
+    pub title: String,
+}
+
+impl TerminalSnapshot {
+    pub fn empty(cols: usize, rows: usize) -> Self {
+        Self {
+            cols,
+            rows,
+            cells: vec![Cell::default(); cols * rows],
+            cursor_col: 0,
+            cursor_row: 0,
+            mode: TerminalMode::default(),
+            scroll_offset: 0,
+            title: String::new(),
+        }
+    }
+
+    pub fn cell(&self, col: usize, row: usize) -> Option<&Cell> {
+        if col >= self.cols || row >= self.rows {
+            return None;
+        }
+        self.cells.get(row * self.cols + col)
+    }
 }
 
 impl Default for Cell {
@@ -50,6 +74,7 @@ impl Default for Cell {
             italic: false,
             underline: false,
             strikethrough: false,
+            inverse: false,
         }
     }
 }
@@ -61,6 +86,8 @@ impl Default for TerminalMode {
             cursor_visible: true,
             bracketed_paste: false,
             app_cursor_keys: false,
+            app_keypad: false,
+            mouse_reporting: false,
         }
     }
 }
