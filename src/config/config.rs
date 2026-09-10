@@ -19,9 +19,8 @@ impl EmulatorConfig {
         let lib = format!("{}/lib", usr);
 
         let path = format!(
-            "{bin}:{usr}/bin:/system/bin:/system/xbin",
-            bin = bin,
-            usr = usr
+            "{}:{}:/system/bin:/system/xbin",
+            bin, usr
         );
 
         Self {
