@@ -1,12 +1,10 @@
 pub mod config;
 pub mod engine;
 pub mod error;
-pub mod ffi;
 pub mod input;
 pub mod logger;
 pub mod output;
 pub mod parser;
-pub mod platform;
 pub mod pty;
 pub mod session;
 pub mod snapshot;
@@ -29,6 +27,8 @@ pub struct StardewEmulator {
     pty: Arc<Mutex<Pty>>,
     session: Arc<Mutex<Session>>,
     snapshot: TerminalSnapshot,
+    cols: usize,
+    rows: usize,
 }
 
 impl StardewEmulator {
@@ -43,6 +43,8 @@ impl StardewEmulator {
             pty: Arc::new(Mutex::new(pty)),
             session: Arc::new(Mutex::new(session)),
             snapshot,
+            cols,
+            rows,
         })
     }
 
@@ -53,7 +55,8 @@ impl StardewEmulator {
     pub fn resize(&mut self, cols: usize, rows: usize) -> Result<(), EmulatorError> {
         self.engine.lock().unwrap().resize(cols, rows);
         self.pty.lock().unwrap().resize(cols as u16, rows as u16)?;
-        self.snapshot = TerminalSnapshot::empty(cols, rows);
+        self.cols = cols;
+        self.rows = rows;
         Ok(())
     }
 
@@ -69,6 +72,14 @@ impl StardewEmulator {
 
     pub fn snapshot(&self) -> &TerminalSnapshot {
         &self.snapshot
+    }
+
+    pub fn cols(&self) -> usize {
+        self.cols
+    }
+
+    pub fn rows(&self) -> usize {
+        self.rows
     }
 
     pub fn engine(&self) -> Arc<Mutex<Engine>> {
