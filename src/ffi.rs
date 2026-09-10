@@ -1,6 +1,6 @@
 #[no_mangle]
-pub extern "C" fn stardew_emulator_version() -> *const u8 {
-    b"0.11.1\0".as_ptr()
+pub extern "C" fn stardew_emulator_version() -> *const std::ffi::c_char {
+    c"0.11.1".as_ptr()
 }
 
 #[no_mangle]
