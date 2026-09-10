@@ -10,6 +10,8 @@ pub enum EmulatorError {
     Terminal(String),
     #[error("Config error: {0}")]
     Config(String),
+    #[error("JNI error: {0}")]
+    Jni(String),
 }
 
 pub type Result<T> = std::result::Result<T, EmulatorError>;
