@@ -27,24 +27,29 @@ pub struct StardewEmulator {
     pty: Arc<Mutex<Pty>>,
     session: Arc<Mutex<Session>>,
     snapshot: TerminalSnapshot,
-    cols: usize,
-    rows: usize,
+    config: EmulatorConfig,
 }
 
 impl StardewEmulator {
     pub fn new(cols: usize, rows: usize) -> Result<Self, EmulatorError> {
-        let engine = Engine::new(cols, rows);
-        let pty = Pty::new(cols as u16, rows as u16)?;
+        let mut config = EmulatorConfig::default();
+        config.cols = cols;
+        config.rows = rows;
+        Self::with_config(config)
+    }
+
+    pub fn with_config(config: EmulatorConfig) -> Result<Self, EmulatorError> {
+        let engine = Engine::new(config.cols, config.rows);
+        let pty = Pty::new(&config)?;
         let session = Session::new();
-        let snapshot = TerminalSnapshot::empty(cols, rows);
+        let snapshot = TerminalSnapshot::empty(config.cols, config.rows);
 
         Ok(Self {
             engine: Arc::new(Mutex::new(engine)),
             pty: Arc::new(Mutex::new(pty)),
             session: Arc::new(Mutex::new(session)),
             snapshot,
-            cols,
-            rows,
+            config,
         })
     }
 
@@ -55,8 +60,8 @@ impl StardewEmulator {
     pub fn resize(&mut self, cols: usize, rows: usize) -> Result<(), EmulatorError> {
         self.engine.lock().unwrap().resize(cols, rows);
         self.pty.lock().unwrap().resize(cols as u16, rows as u16)?;
-        self.cols = cols;
-        self.rows = rows;
+        self.config.cols = cols;
+        self.config.rows = rows;
         Ok(())
     }
 
@@ -74,12 +79,8 @@ impl StardewEmulator {
         &self.snapshot
     }
 
-    pub fn cols(&self) -> usize {
-        self.cols
-    }
-
-    pub fn rows(&self) -> usize {
-        self.rows
+    pub fn config(&self) -> &EmulatorConfig {
+        &self.config
     }
 
     pub fn engine(&self) -> Arc<Mutex<Engine>> {
