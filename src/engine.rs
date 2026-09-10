@@ -47,8 +47,6 @@ impl Engine {
 
     pub fn process(&mut self, data: &[u8]) {
         self.processor.advance(&mut self.term, data);
-        self.processor.advance(&mut self.term, data);
-        }
         self.drain_events();
     }
 
