@@ -10,7 +10,7 @@ lazy_static::lazy_static! {
 
 #[no_mangle]
 pub extern "system" fn Java_io_stardew_emulator_EmulatorNative_create(
-    env: JNIEnv,
+    mut env: JNIEnv,
     _class: JClass,
     cols: jint,
     rows: jint,
