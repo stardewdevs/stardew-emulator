@@ -15,10 +15,12 @@ pub mod error;
 pub mod logger;
 pub mod utils;
 pub mod platform;
+pub mod snapshot;
 
 use renderer::Renderer;
 use sugarloaf::Sugarloaf;
 use wgpu::Device;
+use snapshot::{Cell, Color, TerminalSnapshot, TerminalMode};
 
 pub struct StardewView {
     renderer: Renderer,
