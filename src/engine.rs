@@ -46,8 +46,8 @@ impl Engine {
     }
 
     pub fn process(&mut self, data: &[u8]) {
-        for byte in data {
-            self.processor.advance(&mut self.term, *byte);
+        self.processor.advance(&mut self.term, data);
+        self.processor.advance(&mut self.term, data);
         }
         self.drain_events();
     }
@@ -202,6 +202,8 @@ fn named_color_to_rgb(color: NamedColor) -> (u8, u8, u8) {
         NamedColor::Foreground => (255, 255, 255),
         NamedColor::Background => (0, 0, 0),
         NamedColor::Cursor => (255, 255, 255),
+        NamedColor::BrightForeground => (255, 255, 255),
+        NamedColor::DimForeground => (150, 150, 150),
     }
 }
 

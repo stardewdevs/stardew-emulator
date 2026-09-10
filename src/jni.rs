@@ -10,7 +10,7 @@ lazy_static::lazy_static! {
 
 #[no_mangle]
 pub extern "system" fn Java_io_stardew_emulator_EmulatorNative_create(
-    mut env: JNIEnv,
+    env: JNIEnv,
     _class: JClass,
     cols: jint,
     rows: jint,
@@ -60,7 +60,7 @@ pub extern "system" fn Java_io_stardew_emulator_EmulatorNative_update(
 
 #[no_mangle]
 pub extern "system" fn Java_io_stardew_emulator_EmulatorNative_snapshot(
-    mut env: JNIEnv,
+    env: JNIEnv,
     _class: JClass,
     _handle: jlong,
 ) -> jstring {
@@ -104,7 +104,7 @@ pub extern "system" fn Java_io_stardew_emulator_EmulatorNative_destroy(
 
 #[no_mangle]
 pub extern "system" fn Java_io_stardew_emulator_EmulatorNative_title(
-    mut env: JNIEnv,
+    env: JNIEnv,
     _class: JClass,
     _handle: jlong,
 ) -> jstring {
